@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Greeting } from './greeting';
+import { GreetingService } from './greeting.service';
 
 @Component({
   selector: 'app-greeting',
@@ -9,12 +10,31 @@ import { Greeting } from './greeting';
 export class GreetingComponent implements OnInit {
 
   public greeting = new Greeting();
+  @Input() name: string = '';
 
-  constructor() { }
+  constructor(
+    private greetingService: GreetingService
+  ) { }
 
   ngOnInit(): void {
-    this.greeting.id = 1;
-    this.greeting.content = "Hello, World!";
+    if (this.name) {
+      this.getGreetingForUser()
+    } else {
+      this.getGreeting();
+    }
   }
+
+  private getGreetingForUser(): void {
+    this.greetingService.getGreetingForUser(this.name).subscribe(greeting => {
+      this.greeting = greeting;
+    });
+  }
+
+  private getGreeting(): void {
+    this.greetingService.getGreeting().subscribe(greeting => {
+      this.greeting = greeting;
+    });
+  }
+
 
 }
